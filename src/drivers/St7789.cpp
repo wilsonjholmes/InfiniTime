@@ -153,6 +153,15 @@ void St7789::DrawPixel(uint16_t x, uint16_t y, uint32_t color) {
 void St7789::DrawBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height, const uint8_t* data, size_t size) {
   SetAddrWindow(x, y, x + width - 1, y + height - 1);
   nrf_gpio_pin_set(pinDataCommand);
+  auto *d = reinterpret_cast<uint16_t*>(const_cast<uint8_t*>(data));
+
+  for(size_t i = 0; i < (size/2); i++) {
+    uint8_t r = (d[i] >>3) & 0x1F;
+    uint8_t g = ((d[i] >> 13) & 7)  | ((d[i] & 7) << 3);
+    uint8_t b = (d[i] >>8) & 0x1F;
+    d[i] = (r+g+b)/3 & 0xF8;
+  }
+
   WriteSpi(data, size);
 }
 
