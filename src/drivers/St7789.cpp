@@ -155,13 +155,22 @@ void St7789::DrawBuffer(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
   nrf_gpio_pin_set(pinDataCommand);
   auto *d = reinterpret_cast<uint16_t*>(const_cast<uint8_t*>(data));
 
+  // Red (Night Mode)
+  // for(size_t i = 0; i < (size/2); i++) {
+  //   uint8_t r = (d[i] >>3) & 0x1F;
+  //   uint8_t g = ((d[i] >> 13) & 7)  | ((d[i] & 7) << 3);
+  //   uint8_t b = (d[i] >>8) & 0x1F;
+  //   d[i] = (r | (g>>1) | b) << 3;
+  // }
+  
+  // Green (Hacker Mode)
   for(size_t i = 0; i < (size/2); i++) {
     uint8_t r = (d[i] >>3) & 0x1F;
     uint8_t g = ((d[i] >> 13) & 7)  | ((d[i] & 7) << 3);
     uint8_t b = (d[i] >>8) & 0x1F;
-    d[i] = (r+g+b)/3 & 0xF8;
+    uint16_t buf = ((r<<1) | g | (b<<1));
+    d[i] = (buf & 7) | ((buf & 0x78) << 13);
   }
-
   WriteSpi(data, size);
 }
 
