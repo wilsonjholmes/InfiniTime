@@ -1,8 +1,8 @@
-#include "St7789.h"
+#include "drivers/St7789.h"
 #include <hal/nrf_gpio.h>
 #include <libraries/delay/nrf_delay.h>
 #include <nrfx_log.h>
-#include "Spi.h"
+#include "drivers/Spi.h"
 
 using namespace Pinetime::Drivers;
 
@@ -170,16 +170,7 @@ void St7789::Sleep() {
 
 void St7789::Wakeup() {
   nrf_gpio_cfg_output(pinDataCommand);
-  // TODO why do we need to reset the controller?
-  HardwareReset();
-  SoftwareReset();
   SleepOut();
-  ColMod();
-  MemoryDataAccessControl();
-  ColumnAddressSet();
-  RowAddressSet();
-  DisplayInversionOn();
-  NormalModeOn();
   VerticalScrollStartAddress(verticalScrollingStartAddress);
   DisplayOn();
   NRF_LOG_INFO("[LCD] Wakeup")

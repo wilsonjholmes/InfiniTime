@@ -4,8 +4,7 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
-#include "Screen.h"
-#include "ScreenList.h"
+#include "displayapp/screens/Screen.h"
 #include "components/datetime/DateTimeController.h"
 
 namespace Pinetime {
@@ -44,6 +43,7 @@ namespace Pinetime {
         uint8_t currentDay = 0;
 
         DirtyValue<uint8_t> batteryPercentRemaining {};
+        DirtyValue<bool> powerPresent {};
         DirtyValue<bool> bleState {};
         DirtyValue<std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>> currentDateTime {};
         DirtyValue<bool> motionSensorOk {};
