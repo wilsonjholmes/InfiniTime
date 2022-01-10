@@ -1,8 +1,8 @@
-#include "AlertNotificationService.h"
+#include "components/ble/AlertNotificationService.h"
 #include <hal/nrf_rtc.h>
 #include <cstring>
 #include <algorithm>
-#include "NotificationManager.h"
+#include "components/ble/NotificationManager.h"
 #include "systemtask/SystemTask.h"
 
 using namespace Pinetime::Controllers;
@@ -26,11 +26,8 @@ void AlertNotificationService::Init() {
 }
 
 AlertNotificationService::AlertNotificationService(System::SystemTask& systemTask, NotificationManager& notificationManager)
-  : characteristicDefinition {{.uuid = (ble_uuid_t*) &ansCharUuid,
-                               .access_cb = AlertNotificationCallback,
-                               .arg = this,
-                               .flags = BLE_GATT_CHR_F_WRITE},
-                              {.uuid = (ble_uuid_t*) &notificationEventUuid,
+  : characteristicDefinition {{.uuid = &ansCharUuid.u, .access_cb = AlertNotificationCallback, .arg = this, .flags = BLE_GATT_CHR_F_WRITE},
+                              {.uuid = &notificationEventUuid.u,
                                .access_cb = AlertNotificationCallback,
                                .arg = this,
                                .flags = BLE_GATT_CHR_F_NOTIFY,
@@ -39,7 +36,7 @@ AlertNotificationService::AlertNotificationService(System::SystemTask& systemTas
     serviceDefinition {
       {/* Device Information Service */
        .type = BLE_GATT_SVC_TYPE_PRIMARY,
-       .uuid = (ble_uuid_t*) &ansUuid,
+       .uuid = &ansUuid.u,
        .characteristics = characteristicDefinition},
       {0},
     },
@@ -56,8 +53,9 @@ int AlertNotificationService::OnAlert(uint16_t conn_handle, uint16_t attr_handle
 
     // Ignore notifications with empty message
     const auto packetLen = OS_MBUF_PKTLEN(ctxt->om);
-    if (packetLen <= headerSize)
+    if (packetLen <= headerSize) {
       return 0;
+    }
 
     size_t bufferSize = std::min(packetLen + stringTerminatorSize, maxBufferSize);
     auto messageSize = std::min(maxMessageSize, (bufferSize - headerSize));

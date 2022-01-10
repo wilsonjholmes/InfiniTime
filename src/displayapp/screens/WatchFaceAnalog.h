@@ -4,8 +4,7 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
-#include "Screen.h"
-#include "ScreenList.h"
+#include "displayapp/screens/Screen.h"
 #include "components/datetime/DateTimeController.h"
 #include "components/battery/BatteryController.h"
 #include "components/ble/BleController.h"
@@ -49,6 +48,7 @@ namespace Pinetime {
         uint8_t currentDay = 0;
 
         DirtyValue<uint8_t> batteryPercentRemaining {0};
+        DirtyValue<bool> isCharging {};
         DirtyValue<std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>> currentDateTime;
         DirtyValue<bool> notificationState {false};
 
@@ -81,6 +81,7 @@ namespace Pinetime {
         Controllers::Settings& settingsController;
 
         void UpdateClock();
+        void SetBatteryIcon();
 
         lv_task_t* taskRefresh;
       };

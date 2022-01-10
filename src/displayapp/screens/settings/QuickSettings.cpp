@@ -1,4 +1,4 @@
-#include "QuickSettings.h"
+#include "displayapp/screens/settings/QuickSettings.h"
 #include "displayapp/DisplayApp.h"
 #include "displayapp/screens/Symbols.h"
 #include "displayapp/screens/BatteryIcon.h"
@@ -131,7 +131,7 @@ void QuickSettings::OnButtonEvent(lv_obj_t* object, lv_event_t event) {
   if (object == btn2 && event == LV_EVENT_CLICKED) {
 
     running = false;
-    app->StartApp(Apps::FlashLight, DisplayApp::FullRefreshDirections::None);
+    app->StartApp(Apps::FlashLight, DisplayApp::FullRefreshDirections::Up);
 
   } else if (object == btn1 && event == LV_EVENT_CLICKED) {
 

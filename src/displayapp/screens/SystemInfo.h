@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "Screen.h"
-#include "ScreenList.h"
+#include "displayapp/screens/Screen.h"
+#include "displayapp/screens/ScreenList.h"
 
 namespace Pinetime {
   namespace Controllers {
@@ -28,7 +28,8 @@ namespace Pinetime {
                             Pinetime::Controllers::BrightnessController& brightnessController,
                             Pinetime::Controllers::Ble& bleController,
                             Pinetime::Drivers::WatchdogView& watchdog,
-                            Pinetime::Controllers::MotionController& motionController);
+                            Pinetime::Controllers::MotionController& motionController,
+                            Pinetime::Drivers::Cst816S& touchPanel);
         ~SystemInfo() override;
         bool OnTouchEvent(TouchEvents event) override;
 
@@ -39,6 +40,7 @@ namespace Pinetime {
         Pinetime::Controllers::Ble& bleController;
         Pinetime::Drivers::WatchdogView& watchdog;
         Pinetime::Controllers::MotionController& motionController;
+        Pinetime::Drivers::Cst816S& touchPanel;
 
         ScreenList<5> screens;
 

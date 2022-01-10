@@ -15,9 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include "Alarm.h"
-#include "Screen.h"
-#include "Symbols.h"
+#include "displayapp/screens/Alarm.h"
+#include "displayapp/screens/Screen.h"
+#include "displayapp/screens/Symbols.h"
 
 using namespace Pinetime::Applications::Screens;
 using Pinetime::Controllers::AlarmController;
@@ -36,7 +36,7 @@ Alarm::Alarm(DisplayApp* app, Controllers::AlarmController& alarmController)
 
   alarmHours = alarmController.Hours();
   alarmMinutes = alarmController.Minutes();
-  lv_label_set_text_fmt(time, "%02lu:%02lu", alarmHours, alarmMinutes);
+  lv_label_set_text_fmt(time, "%02hhu:%02hhu", alarmHours, alarmMinutes);
 
   lv_obj_align(time, lv_scr_act(), LV_ALIGN_CENTER, 0, -25);
 
@@ -120,10 +120,7 @@ void Alarm::OnButtonEvent(lv_obj_t* obj, lv_event_t event) {
       return;
     }
     if (obj == btnMessage) {
-      lv_obj_del(txtMessage);
-      lv_obj_del(btnMessage);
-      txtMessage = nullptr;
-      btnMessage = nullptr;
+      HideInfo();
       return;
     }
     // If any other button was pressed, disable the alarm
@@ -174,6 +171,14 @@ void Alarm::OnButtonEvent(lv_obj_t* obj, lv_event_t event) {
   }
 }
 
+bool Alarm::OnButtonPushed() {
+  if (txtMessage != nullptr && btnMessage != nullptr) {
+    HideInfo();
+    return true;
+  }
+  return false;
+}
+
 void Alarm::UpdateAlarmTime() {
   lv_label_set_text_fmt(time, "%02d:%02d", alarmHours, alarmMinutes);
   alarmController.SetAlarmTime(alarmHours, alarmMinutes);
@@ -218,10 +223,16 @@ void Alarm::ShowInfo() {
     auto secToAlarm = timeToAlarm % 60;
 
     lv_label_set_text_fmt(
-      txtMessage, "Time to\nalarm:\n%2d Days\n%2d Hours\n%2d Minutes\n%2d Seconds", daysToAlarm, hrsToAlarm, minToAlarm, secToAlarm);
+      txtMessage, "Time to\nalarm:\n%2lu Days\n%2lu Hours\n%2lu Minutes\n%2lu Seconds", daysToAlarm, hrsToAlarm, minToAlarm, secToAlarm);
   } else {
     lv_label_set_text(txtMessage, "Alarm\nis not\nset.");
   }
+}
+
+void Alarm::HideInfo() {
+  lv_obj_del(btnMessage);
+  txtMessage = nullptr;
+  btnMessage = nullptr;
 }
 
 void Alarm::SetRecurButtonState() {
